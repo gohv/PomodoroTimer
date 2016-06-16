@@ -1,0 +1,22 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="Pomodoro">
+    <output-path>$USER_HOME$/Desktop</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="com.home.pomodoro.Main" />
+        <option name="description" value="" />
+        <option name="height" value="500" />
+        <option name="htmlParamFile" value="" />
+        <option name="paramFile" value="" />
+        <option name="title" value="" />
+        <option name="vendor" value="" />
+        <option name="width" value="500" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="Pomodoro.jar">
+        <element id="module-output" name="Pomodoro" />
+      </element>
+    </root>
+  </artifact>
+</component>
