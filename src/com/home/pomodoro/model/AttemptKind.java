@@ -3,8 +3,8 @@ package com.home.pomodoro.model;
 
 public enum AttemptKind {
 
-    FOCUS(25 * 60, "FOCUS TIME"),
-    BREAK(5 * 60, "BREAK TIME");
+    FOCUS(25 * 60, "Focus time"),
+    BREAK(5 * 60, "Break time");
 
     private int totalSeconds;
     private String displayName;

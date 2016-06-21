@@ -2,6 +2,7 @@ package com.home.pomodoro.controllers;
 
 import com.home.pomodoro.model.Attempt;
 import com.home.pomodoro.model.AttemptKind;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
@@ -9,14 +10,19 @@ import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
 import javafx.util.Duration;
 
 public class Home {
+    private final AudioClip applause;
     @FXML
     private VBox container;
     @FXML
     private Label title;
+    @FXML
+    private TextArea message;
 
 
     private Attempt currentAttempt;
@@ -28,6 +34,7 @@ public class Home {
         //simple string property implementation:
         timerText = new SimpleStringProperty();
         setTimerText(0);
+        applause = new AudioClip(getClass().getResource("/sounds/applause.mp3").toExternalForm());
     }
 
     public String getTimerText() {
@@ -49,12 +56,12 @@ public class Home {
     }
 
     private void prepareAttempt(AttemptKind kind) {
+       // resetTimeline();
         clearAttemptStyles();
         currentAttempt = new Attempt(kind, " ");
         addAttemptStyle(kind);
         title.setText(kind.getDisplayName());
         setTimerText(currentAttempt.getRemainingSeconds());
-        //TODO: This is creating multiple timelins and causing the timer to go faster !!!
         timeLine = new Timeline();
         timeLine.setCycleCount(kind.getTotalSeconds());
         // get all frames that are curently existing - it is a list
@@ -63,14 +70,37 @@ public class Home {
             currentAttempt.tick();
             setTimerText(currentAttempt.getRemainingSeconds());
         }));
+        timeLine.setOnFinished(event -> {
+            saveCurrentAttempt();
+            //throws exception on UBUNTU 16
+            applause.play();
+            // if the current kind is focus - switch it to break; otherwise switch it to focus
+            prepareAttempt(currentAttempt.getKind() == AttemptKind.FOCUS ?
+                    AttemptKind.BREAK : AttemptKind.FOCUS);
+        });
     }
 
-    public void playTimer(){
+    private void saveCurrentAttempt() {
+        currentAttempt.setMessage(message.getText());
+        currentAttempt.save();
+    }
+
+    private void resetTimeline() {
+        clearAttemptStyles();
+        //clearing the bug with the multiple timelines - causing the timer to go faster
+        if (timeLine != null && timeLine.getStatus() == Animation.Status.RUNNING) {
+            timeLine.stop();
+        }
+    }
+
+    public void playTimer() {
+        container.getStyleClass().add("playing");
         timeLine.play();
 
     }
 
-    public void pauseTimer(){
+    public void pauseTimer() {
+        container.getStyleClass().remove("playing");
         timeLine.pause();
     }
 
@@ -80,17 +110,29 @@ public class Home {
     }
 
     private void clearAttemptStyles() {
+        container.getStyleClass().remove("playing");
         for (AttemptKind kind : AttemptKind.values()) {
             container.getStyleClass().remove(kind.toString().toLowerCase());
         }
     }
 
-    public void debug(ActionEvent actionEvent) {
-        System.out.println("DEBUG");
-    }
 
     public void restart(ActionEvent actionEvent) {
         prepareAttempt(AttemptKind.FOCUS);
         playTimer();
+    }
+
+    public void play(ActionEvent actionEvent) {
+        if (currentAttempt == null) {
+            restart(actionEvent);
+        } else {
+            playTimer();
+        }
+        playTimer();
+    }
+
+    public void pause(ActionEvent actionEvent) {
+        pauseTimer();
+
     }
 }
