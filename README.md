@@ -4,16 +4,4 @@ POMODORO TIMER:
 
 A JavaFX Version of the POMODORO Method Timer.
 
-The CSS Styling is not build by me!
-
-
-Design was build by Susan Lin:
-
-
-http://bysusanlin.com
-
-
-https://twitter.com/bysusanlin
-
-
-The backend Logic has been implemented by me!
+http://pomodorotechnique.com/
