@@ -30,11 +30,13 @@ public class Home {
     private StringProperty timerText;
     private Timeline timeLine;
 
+
     public Home() {
         //simple string property implementation:
         timerText = new SimpleStringProperty();
         setTimerText(0);
         applause = new AudioClip(getClass().getResource("/sounds/applause.mp3").toExternalForm());
+        timeLine = new Timeline(); //There should be only one Timeline
     }
 
     public String getTimerText() {
@@ -62,7 +64,9 @@ public class Home {
         addAttemptStyle(kind);
         title.setText(kind.getDisplayName());
         setTimerText(currentAttempt.getRemainingSeconds());
-        timeLine = new Timeline();
+        timeLine.stop(); // For paused timeline
+        timeLine.getKeyFrames().removeAll(timeLine.getKeyFrames()); //Remove old frames before adding new ones
+
         timeLine.setCycleCount(kind.getTotalSeconds());
         // get all frames that are curently existing - it is a list
         // add to them and create a brand new keyframe
@@ -128,7 +132,9 @@ public class Home {
         } else {
             playTimer();
         }
-        playTimer();
+
+        //This makes the application freezed and has to click "Pause" another time to get to "Resume"
+        //playTimer();
     }
 
     public void pause(ActionEvent actionEvent) {
